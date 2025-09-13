@@ -81,7 +81,13 @@
         592
       ],
       "id": "3167c3c1-2eaa-47f5-9222-0b8e06fc179e",
-      "name": "Google Gemini Chat Model"
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NW8iHN0SzAA2GUte",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
     },
     {
       "parameters": {
@@ -320,7 +326,13 @@
       ],
       "id": "ecdbfaec-de25-46ba-b17c-9b2517eb7d61",
       "name": "Send email",
-      "webhookId": "0a7e52e0-e1e3-4adf-89ff-4a50d6dec602"
+      "webhookId": "0a7e52e0-e1e3-4adf-89ff-4a50d6dec602",
+      "credentials": {
+        "smtp": {
+          "id": "q4Ke00FJX1dwvpvz",
+          "name": "SMTP account"
+        }
+      }
     },
     {
       "parameters": {
@@ -480,7 +492,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "3d624b5d-796a-47c7-ae2f-822b8cb4361b",
+  "versionId": "9c62e764-6f15-40bf-b49f-3da362c0770c",
   "owner": {
     "type": "personal",
     "projectId": "UH5LnHxMjlIlu2W3",
