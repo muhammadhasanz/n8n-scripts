@@ -17,14 +17,8 @@
       "parameters": {
         "url": "https://idebku.ojk.go.id/Public/PendaftaranOnline/PreRegister",
         "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Cookie",
-              "value": "={{ $json.Cookie }}"
-            }
-          ]
-        },
+        "specifyHeaders": "json",
+        "jsonHeaders": "={{ $('Headers').item.json.toJsonString() }}",
         "options": {
           "response": {
             "response": {
@@ -52,7 +46,7 @@
         "messages": {
           "messageValues": [
             {
-              "message": "=Kamu adalah pembaca teks dari gambar (OCR).\nTugasmu:\n\nMembaca teks dari input biner {{ $('Download the Captcha').item.binary }}.\n\nMenjaga keakuratan huruf besar dan huruf kecil, kamu juga bisa memastikannya dengan ukurannya krena ini bukan model huruf berkait.\n\nPastinkan mengembalikan string tanpa spasi.\n\nMengembalikan hasil dalam format text captcha dengan struktur berikut:\n\nhasil_teks\n\n\nJika teks tidak terbaca, isi dengan nilai null:\n\nnull\n\n\nJangan keluarkan penjelasan tambahan, hanya captcha saja."
+              "message": "=Kamu adalah pembaca teks dari gambar (OCR).\nTugasmu:\n\nMembaca teks dari input biner {{ $('Download the Captcha').item.binary }}.\n\nMenjaga keakuratan huruf besar dan huruf kecil, kamu juga bisa memastikannya dengan ukurannya krena ini bukan model huruf berkait.\n\nIMPORTANT Pastinkan mengembalikan string tanpa spasi.\n\nMengembalikan hasil dalam format text captcha dengan struktur berikut:\n\nhasil_teks\n\n\nJika teks tidak terbaca, isi dengan nilai null:\n\nnull\n\n\nJangan keluarkan penjelasan tambahan, hanya captcha saja."
             },
             {
               "type": "HumanMessagePromptTemplate",
@@ -107,8 +101,13 @@
         "url": "https://idebku.ojk.go.id/get-captcha-image",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "={{ $('Cookie').item.json.toJsonString() }}",
+        "jsonHeaders": "={{ $('Headers').item.json.toJsonString() }}",
         "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
           "timeout": 10000
         }
       },
@@ -121,19 +120,6 @@
       "id": "3589bbb2-509a-49c4-954e-b17e24376f28",
       "name": "Download the Captcha",
       "retryOnFail": true
-    },
-    {
-      "parameters": {
-        "jsCode": "const headers = {\n  \"Cookie\": 'iDebku_AntiforgeryCookie=CfDJ8Oe-fSzF3vJAn5xUFwUoxj20HB4SL2L_dNfjum4Vi2GPFYbgWfQi1JbUuLe_xA8gNH4d22BwLiM-wa6oLqHoiA8BvhQ_1izHMAdMNAqjrmcYVn1WzmG81rnWFpVhciGRgqTbCT7J4eOHCtyXEBg7Dfc; BIGipServerpool_idebku=1078392842.20480.0000; iDebku_Cookie=CfDJ8Oe%2BfSzF3vJAn5xUFwUoxj1sjWYMS6Hvxa9kkV3XGkjNd%2FwBnEYVRrAPgDUndLkZuj%2FkWcUQ1eJ%2Fk7bzU8zeCTNhguRq5MmJR%2BAOIhK6CMwqoM3VtadUvMc0uZnwdDJG0lHxtwKO83woH1HXTWgtzpQhHq%2F3j1NyfTCs2tDHMVfx; TS0115d5bc=010da0281090c61222c95eac1a48aee0b8108d250602c78cab9502d2ea6b3b8cb8a05d2e909d5ddf8f51a33248ad51298bcda1cd69a26853fd0deda6a1ff730e2e3ff6f2b016eafb038f30399f72a1b578823f4930c328792012a819058c33ca602c8ed29e'\n}\nreturn [headers];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        624,
-        128
-      ],
-      "id": "9af18c73-cf77-4535-a85d-1e841afe04a4",
-      "name": "Cookie"
     },
     {
       "parameters": {
@@ -233,7 +219,7 @@
           "parameters": [
             {
               "name": "Cookie",
-              "value": "={{ $('Cookie').item.json.Cookie }}"
+              "value": "={{ $('Get Initial Requirement').item.json.headers['set-cookie'][0].split(';')[0] }};{{ $('Download the Captcha').item.json.headers['set-cookie'][0].split(';')[0] }};{{ $('Get Initial Requirement').item.json.headers['set-cookie'][1].split(';')[0] }};{{ $('Get Initial Requirement').item.json.headers['set-cookie'][2].split(';')[0] }};"
             }
           ]
         },
@@ -284,6 +270,11 @@
           ]
         },
         "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
           "timeout": 10000
         }
       },
@@ -339,8 +330,8 @@
         "rule": {
           "interval": [
             {
-              "field": "minutes",
-              "minutesInterval": 10
+              "field": "cronExpression",
+              "expression": "*/10 0-30 7,8,9,12,14 * * *"
             }
           ]
         }
@@ -355,6 +346,19 @@
       "name": "Schedule Trigger",
       "retryOnFail": false,
       "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const headers = {\n  \"Accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\",\n  \"Accept-Language\": \"id,en-US;q=0.9,en;q=0.8,ar;q=0.7,az;q=0.6\",\n  \"Cache-Control\": \"max-age=0\",\n  \"Connection\": \"keep-alive\",\n  \"Content-Type\": \"application/x-www-form-urlencoded\",\n  \"Origin\": \"https://idebku.ojk.go.id\",\n  \"Referer\": \"https://idebku.ojk.go.id/Public/PendaftaranOnline/PreRegister\",\n  \"Sec-Fetch-Dest\": \"document\",\n  \"Sec-Fetch-Mode\": \"navigate\",\n  \"Sec-Fetch-Site\": \"same-origin\",\n  \"Sec-Fetch-User\": \"?1\",\n  \"Upgrade-Insecure-Requests\": \"1\",\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"140\\\", \\\"Not=A?Brand\\\";v=\\\"24\\\", \\\"Microsoft Edge\\\";v=\\\"140\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"Windows\\\"\"\n};\n\nreturn [headers];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        128
+      ],
+      "id": "9af18c73-cf77-4535-a85d-1e841afe04a4",
+      "name": "Headers"
     }
   ],
   "connections": {
@@ -362,7 +366,7 @@
       "main": [
         [
           {
-            "node": "Cookie",
+            "node": "Headers",
             "type": "main",
             "index": 0
           }
@@ -424,17 +428,6 @@
         ]
       ]
     },
-    "Cookie": {
-      "main": [
-        [
-          {
-            "node": "Get Initial Requirement",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Switch": {
       "main": [
         [
@@ -480,7 +473,23 @@
       "main": [
         [
           {
-            "node": "Cookie",
+            "node": "Headers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        []
+      ]
+    },
+    "Headers": {
+      "main": [
+        [
+          {
+            "node": "Get Initial Requirement",
             "type": "main",
             "index": 0
           }
@@ -489,10 +498,12 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "Asia/Jakarta",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "triggerCount": 1,
-  "versionId": "9c62e764-6f15-40bf-b49f-3da362c0770c",
+  "versionId": "e82d88c3-12af-461c-951d-456d228bbc4b",
   "owner": {
     "type": "personal",
     "projectId": "UH5LnHxMjlIlu2W3",
